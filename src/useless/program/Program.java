@@ -12,17 +12,17 @@ import useless.parser.Statement;
 
 public class Program implements Runnable, Serializable {
 	private static final long serialVersionUID = 1106161002816336835L;
-	private List<RunStatement> statements;
+	private List<RunnableStatement> statements;
 	private transient IO io;
 	private Memory memory;
 	private Map<String, Namespace> namespaces;
 	private Namespace currentNamespace;
 
 	public Program(List<Statement> statements) {
-		this.statements = new ArrayList<RunStatement>();
+		this.statements = new ArrayList<RunnableStatement>();
 		for(Statement statement : statements) {
-			if(statement instanceof RunStatement) {
-				this.statements.add((RunStatement) statement);
+			if(statement instanceof RunnableStatement) {
+				this.statements.add((RunnableStatement) statement);
 			}
 		}
 	}
@@ -31,7 +31,7 @@ public class Program implements Runnable, Serializable {
 	public void run() {
 		namespaces = new HashMap<String, Namespace>();
 		setCurrentNamespace("");
-		for(RunStatement statement : statements) {
+		for(RunnableStatement statement : statements) {
 			statement.run(this);
 		}
 	}

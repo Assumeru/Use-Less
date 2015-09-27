@@ -9,6 +9,10 @@ public class ParseResult {
 		this.tokensConsumed = tokensConsumed;
 	}
 
+	public ParseResult(Statement statement) {
+		this(statement, 0);
+	}
+
 	public Statement getStatement() {
 		return statement;
 	}

@@ -12,6 +12,6 @@ public class SkipNextLine implements TokenParser {
 
 	@Override
 	public ParseResult parse(Parser parser, int index, String[] tokens) {
-		return new ParseResult(new useless.statements.SkipNextLine(), 1);
+		return new ParseResult(new useless.statements.SkipNextLine());
 	}
 }

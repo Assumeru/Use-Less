@@ -30,9 +30,9 @@ public class Memory implements Serializable {
 		}
 		if(pos < 0) {
 			throw new IllegalArgumentException("pos < 0");
-		} else if(length < 1) {
-			throw new IllegalArgumentException("length < 1");
-		} else if(pos < data.length && pos + length <= data.length) {
+		} else if(length < 0) {
+			throw new IllegalArgumentException("length < 0");
+		} else if(pos <= data.length && pos + length <= data.length) {
 			byte[] dest = new byte[length];
 			System.arraycopy(data, pos, dest, 0, length);
 			return dest;

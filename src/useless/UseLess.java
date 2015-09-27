@@ -15,10 +15,15 @@ import useless.parser.Parser;
 import useless.parser.TokenParser;
 import useless.program.Program;
 import useless.tokens.Allocate;
+import useless.tokens.Assignment;
 import useless.tokens.Deallocate;
+import useless.tokens.IntegerVariable;
+import useless.tokens.MemoryVariable;
+import useless.tokens.Namespace;
 import useless.tokens.PrintMemory;
 import useless.tokens.PrintToken;
 import useless.tokens.SkipNextLine;
+import useless.tokens.StringVariable;
 
 public class UseLess {
 	private static final String HELP = "Usage: ???";
@@ -86,7 +91,7 @@ public class UseLess {
 	private static void exit(String message, Throwable throwable) {
 		io.out.println(message);
 		throwable.printStackTrace(io.err);
-		System.exit(message.hashCode());
+		System.exit(1);
 	}
 
 	private static Program restoreProgram() {
@@ -103,6 +108,11 @@ public class UseLess {
 		tokenParsers.add(new SkipNextLine());
 		tokenParsers.add(new Allocate());
 		tokenParsers.add(new Deallocate());
+		tokenParsers.add(new Namespace());
+		tokenParsers.add(new IntegerVariable());
+		tokenParsers.add(new StringVariable());
+		tokenParsers.add(new MemoryVariable());
+		tokenParsers.add(new Assignment());
 		tokenParsers.add(new PrintMemory());
 		tokenParsers.add(new PrintToken());
 		return tokenParsers;

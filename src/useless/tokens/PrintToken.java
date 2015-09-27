@@ -13,6 +13,6 @@ public class PrintToken implements TokenParser {
 	@Override
 	public ParseResult parse(Parser parser, int index, String[] tokens) {
 		parser.getIO().out.println(tokens[index]);
-		return new ParseResult(null, 0);
+		return new ParseResult(null);
 	}
 }

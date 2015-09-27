@@ -13,7 +13,7 @@ import useless.statements.DeallocateVariable;
 public class Deallocate implements TokenParser {
 	@Override
 	public boolean matches(Parser parser, String token) {
-		return token.charAt(0) == '-' && noPreviousRunStatements(parser);
+		return token.equals("-") && noPreviousRunStatements(parser);
 	}
 
 	private boolean noPreviousRunStatements(Parser parser) {
@@ -30,6 +30,6 @@ public class Deallocate implements TokenParser {
 		if(index + 1 >= tokens.length) {
 			throw new ParseException("Deallocation expects one argument: - [name]", index);
 		}
-		return new ParseResult(new DeallocateVariable(tokens[index + 1]), 1);
+		return new ParseResult(new DeallocateVariable(index));
 	}
 }
