@@ -5,14 +5,14 @@ import useless.parser.ParsedItem;
 import useless.variables.Variable;
 
 public abstract class VariableBinaryToken extends BinaryToken {
-	public VariableBinaryToken(String token, VariableParsedToken result) {
+	public VariableBinaryToken(String token, ParsedVariableToken result) {
 		super(token, result);
 	}
 
-	public static abstract class VariableParsedToken extends BinaryParsedToken {
+	public static abstract class ParsedVariableToken extends ParsedBinaryToken {
 		private static final long serialVersionUID = 231436362847223842L;
 
-		public VariableParsedToken(int precedence) {
+		public ParsedVariableToken(int precedence) {
 			super(precedence);
 		}
 

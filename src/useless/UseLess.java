@@ -15,9 +15,14 @@ import useless.parser.Parser;
 import useless.parser.Scope;
 import useless.program.Program;
 import useless.tokens.AdditionToken;
+import useless.tokens.AssignmentToken;
 import useless.tokens.DivisionToken;
+import useless.tokens.IntegerAllocationToken;
 import useless.tokens.IntegerToken;
 import useless.tokens.MultiplicationToken;
+import useless.tokens.NameToken;
+import useless.tokens.NamespaceToken;
+import useless.tokens.PrintMemoryToken;
 import useless.tokens.PrintToken;
 import useless.tokens.StringToken;
 import useless.tokens.SubtractionToken;
@@ -106,12 +111,17 @@ public class UseLess {
 		List<Token> tokenParsers = new ArrayList<>();
 		tokenParsers.add(new StringToken());
 		tokenParsers.add(new IntegerToken());
+		tokenParsers.add(new NamespaceToken());
+		tokenParsers.add(new IntegerAllocationToken());
 		tokenParsers.add(new MultiplicationToken());
 		tokenParsers.add(new DivisionToken());
 		tokenParsers.add(new AdditionToken());
 		tokenParsers.add(new SubtractionToken());
+		tokenParsers.add(new AssignmentToken());
+		tokenParsers.add(new PrintMemoryToken());
 		tokenParsers.add(new PrintToken());
 		tokenParsers.add(new WhiteSpaceToken());
+		tokenParsers.add(new NameToken());
 		return tokenParsers;
 	}
 

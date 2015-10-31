@@ -13,10 +13,10 @@ public class SubtractionToken extends SimpleToken {
 	}
 
 	public static class SubtractionParsedToken extends ParsedToken {
-		private static final long serialVersionUID = -203535892236835772L;
+		private static final long serialVersionUID = 2390401856716724493L;
 
 		public SubtractionParsedToken() {
-			super(10);
+			super(OPERATION_ADD_SUB);
 		}
 
 		@Override

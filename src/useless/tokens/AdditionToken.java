@@ -9,11 +9,11 @@ public class AdditionToken extends VariableBinaryToken {
 		super("+", new AdditionParsedToken());
 	}
 
-	public static class AdditionParsedToken extends VariableParsedToken {
+	public static class AdditionParsedToken extends ParsedVariableToken {
 		private static final long serialVersionUID = -203535892236835772L;
 
 		public AdditionParsedToken() {
-			super(10);
+			super(OPERATION_ADD_SUB);
 		}
 
 		@Override

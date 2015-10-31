@@ -6,14 +6,14 @@ import useless.exceptions.ParseException;
 import useless.parser.ParsedItem;
 
 public abstract class BinaryToken extends SimpleToken {
-	public BinaryToken(String token, BinaryParsedToken result) {
+	public BinaryToken(String token, ParsedBinaryToken result) {
 		super(token, result);
 	}
 
-	public abstract static class BinaryParsedToken extends ParsedToken {
+	public abstract static class ParsedBinaryToken extends ParsedToken {
 		private static final long serialVersionUID = -8973625368246753744L;
 
-		public BinaryParsedToken(int precedence) {
+		public ParsedBinaryToken(int precedence) {
 			super(precedence);
 		}
 

@@ -1,31 +1,4 @@
-;veryLongOperator
-Create [4] byte variable [bytes]
-	+ "bytes" 4 ; ;
-
-Assign it the value [16]
-	$bytes = 16 ; ;
-
-Create [bytes] byte variable [test]
-	+ "test" $bytes ; ;
-
-Assign it the value [0123456789abcdef]
-	$test = "0123456789abcdef" ; ;
-
-Create [5] byte variable [0123456789abcdef]
-	+ $test 5
-
-	printMemory ; ;
-
-Write outside of [test] into [0123456789abcdef]
-	$test = "0123456789abcdef """""
-
-	printMemory ; ;
-
-Deallocate [0123456789abcdef] and [bytes]
-	- "0123456789abcdef"
-	- "bytes"
-
-	printMemory ;
-Deallocate [test]
-	- "test"
-	printMemory
+int test = 123 + 2
+printMemory
+test = test - 20
+printMemory

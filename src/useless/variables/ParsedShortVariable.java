@@ -7,4 +7,12 @@ public class ParsedShortVariable extends ParsedLongVariable {
 	public ParsedShortVariable(short value) {
 		super(value);
 	}
+
+	@Override
+	public byte[] getValue() {
+		return new byte[] {
+			(byte) (getLongValue() & 0xFF),
+			(byte) ((getLongValue() >> 8) & 0xFF)
+		};
+	}
 }

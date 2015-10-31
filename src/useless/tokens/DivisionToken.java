@@ -9,11 +9,11 @@ public class DivisionToken extends VariableBinaryToken {
 		super("/", new DivisionParsedToken());
 	}
 
-	public static class DivisionParsedToken extends VariableParsedToken {
-		private static final long serialVersionUID = -203535892236835772L;
+	public static class DivisionParsedToken extends ParsedVariableToken {
+		private static final long serialVersionUID = 3918345172596911990L;
 
 		public DivisionParsedToken() {
-			super(11);
+			super(OPERATION_MULT_DIV);
 		}
 
 		@Override

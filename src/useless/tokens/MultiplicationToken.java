@@ -9,11 +9,11 @@ public class MultiplicationToken extends VariableBinaryToken {
 		super("*", new MultiplicationParsedToken());
 	}
 
-	public static class MultiplicationParsedToken extends VariableParsedToken {
-		private static final long serialVersionUID = -203535892236835772L;
+	public static class MultiplicationParsedToken extends ParsedVariableToken {
+		private static final long serialVersionUID = -5419673784964755370L;
 
 		public MultiplicationParsedToken() {
-			super(11);
+			super(OPERATION_MULT_DIV);
 		}
 
 		@Override

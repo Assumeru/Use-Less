@@ -14,11 +14,6 @@ public class ParsedStringVariable implements ParsedVariable {
 	}
 
 	@Override
-	public void setValue(Variable value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public Variable multiply(Variable value) {
 		throw new UnsupportedOperationException();
 	}
