@@ -1,18 +1,35 @@
 package useless.tokens;
 
-import useless.parser.ParseResult;
-import useless.parser.Parser;
-import useless.parser.TokenParser;
+import java.util.List;
 
-public class PrintToken implements TokenParser {
-	@Override
-	public boolean matches(Parser parser, String token) {
-		return true;
+import useless.exceptions.ParseException;
+import useless.parser.ParsedItem;
+import useless.statements.PrintStatement;
+import useless.variables.Variable;
+
+public class PrintToken extends SimpleToken {
+	public PrintToken() {
+		super("print", new ParsedPrintToken());
 	}
 
-	@Override
-	public ParseResult parse(Parser parser, int index, String[] tokens) {
-		parser.getIO().out.println(tokens[index]);
-		return new ParseResult(null);
+	public static class ParsedPrintToken extends ParsedToken {
+		private static final long serialVersionUID = 1387336072284754706L;
+
+		public ParsedPrintToken() {
+			super(0);
+		}
+
+		@Override
+		public boolean parseStatement(List<ParsedItem> tokens, int index) throws ParseException {
+			if(index + 1 < tokens.size()) {
+				ParsedItem variable = tokens.get(index + 1);
+				if(variable instanceof Variable) {
+					tokens.remove(index + 1);
+					tokens.set(index, new PrintStatement((Variable) variable));
+					return true;
+				}
+			}
+			throw new ParseException("print expects a variable", index);
+		}
 	}
 }

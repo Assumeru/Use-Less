@@ -2,7 +2,7 @@ package useless.program;
 
 import java.io.Serializable;
 
-import useless.data.Variable;
+import useless.variables.Variable;
 
 public class VariablePointer implements Serializable {
 	private static final long serialVersionUID = -1876811312437421880L;

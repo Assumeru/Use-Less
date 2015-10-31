@@ -1,114 +1,167 @@
 package useless.parser;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Stack;
 
 import useless.data.IO;
 import useless.exceptions.ParseException;
 import useless.program.Program;
+import useless.statements.Statement;
+import useless.tokens.ParsedToken;
+import useless.tokens.Token;
 
 public class Parser {
+	private static final int BUFFER_SIZE = 1024;
+	private List<Token> tokens;
+	private List<Scope> scopes;
+	private Stack<ScopeElement> tokenScopeStack;
 	private IO io;
-	private List<TokenParser> tokenParsers;
-	private Scanner in;
-	private List<Statement> parsedStatements;
-	private LinkedList<Statement> lineStatements;
 
-	public Parser(IO io, List<TokenParser> tokenParsers) {
+	public Parser(IO io, List<Token> list) {
 		this.io = io;
-		this.tokenParsers = tokenParsers;
+		tokens = list;
+		scopes = new ArrayList<>();
 	}
 
-	public Program parse() throws ParseException {
-		parsedStatements = new ArrayList<Statement>();
-		in = new Scanner(io.in);
-		int lineNumber = 1;
-		while(in.hasNextLine()) {
-			lineStatements = new LinkedList<Statement>();
-			try {
-				String line = doPreParse(in.nextLine());
-				if(line != null) {
-					List<Statement> statements = parseLine(line);
-					parsedStatements.addAll(statements);
-				}
-				doPostParse(line);
-			} catch (ParseException e) {
-				throw new ParseException(e, e.getToken(), lineNumber);
+	public Parser addToken(Token token) {
+		tokens.add(token);
+		return this;
+	}
+
+	public Parser addScope(Scope scope) {
+		scopes.add(scope);
+		return this;
+	}
+
+	public Program parse() throws ParseException, IOException {
+		return parse("UTF-8");
+	}
+
+	public Program parse(String encoding) throws ParseException, IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		byte[] buffer = new byte[BUFFER_SIZE];
+		int read;
+		while((read = io.in.read(buffer)) != -1) {
+			out.write(buffer, 0, read);
+		}
+		return parseInternal(out.toString(encoding));
+	}
+
+	private Program parseInternal(String input) throws ParseException {
+		ScopeElement base = new ScopeElement(null);
+		tokenScopeStack = new Stack<ScopeElement>();
+		tokenScopeStack.add(base);
+		int index = 0;
+		while(index < input.length()) {
+			ScopeTokens scope = getScope(input, index);
+			List<ParsedItem> parsedTokens = scope.getParsedTokens();
+			index += scope.getConsumedCharacters();
+			if(scope.getConsumedCharacters() > 0) {
+				continue;
 			}
-			lineNumber++;
-		}
-		in.close();
-		return new Program(parsedStatements);
-	}
-
-	private String doPreParse(String line) throws ParseException {
-		line = line.trim();
-		if(line.isEmpty()) {
-			return null;
-		}
-		for(Iterator<Statement> it = parsedStatements.iterator(); it.hasNext();) {
-			Statement statement = it.next();
-			if(statement instanceof BeforeParseStatement) {
-				LineStatementResult result = ((BeforeParseStatement)statement).onBeforeParse(this, line);
-				line = result.getLine();
-				if(result.deleteStatement()) {
-					it.remove();
+			ConsumedToken result = parse(input, index);
+			if(result != null) {
+				if(result.getToken() != null) {
+					parsedTokens.add(result.getToken());
 				}
-			}
-		}
-		return line;
-	}
-
-	private void doPostParse(String line) throws ParseException {
-		for(int i = 0; i < parsedStatements.size(); i++) {
-			Statement statement = parsedStatements.get(i);
-			if(statement instanceof AfterParseStatement) {
-				LineStatementResult result = ((AfterParseStatement)statement).onAfterParse(this, line, i);
-				line = result.getLine();
-				if(result.deleteStatement()) {
-					parsedStatements.remove(i);
-					i--;
-				}
+				index += result.getLength();
+				continue;
+			} else {
+				throw new ParseException("Failed to parse " + input.substring(index), index);
 			}
 		}
+		if(tokenScopeStack.size() > 1) {
+			throw new ParseException("Failed to close scope, missing: "+tokenScopeStack.peek().getEnd(), -1);
+		}
+		return createProgram(parseTokens(tokenScopeStack.pop().getParsedTokens()));
 	}
 
-	private int parseToken(String[] tokens, int i, List<Statement> statements) throws ParseException {
-		for(TokenParser parser : tokenParsers) {
-			if(parser.matches(this, tokens[i])) {
-				ParseResult result = parser.parse(this, i, tokens);
-				Statement statement = result.getStatement();
-				if(statement != null) {
-					statements.add(statement);
-					lineStatements.add(statement);
+	private ScopeTokens getScope(String input, int index) throws ParseException {
+		int consumedCharacters = 0;
+		if(tokenScopeStack.size() > 1) {
+			ScopeElement current = tokenScopeStack.peek();
+			if(input.startsWith(current.getEnd(), index)) {
+				tokenScopeStack.pop();
+				List<ParsedItem> list = tokenScopeStack.peek().getParsedTokens();
+				if(current.getBefore() != null) {
+					list.add(current.getBefore());
 				}
-				return result.getExtraTokensConsumed();
+				list.addAll(parseTokens(current.getParsedTokens()));
+				if(current.getAfter() != null) {
+					list.add(current.getAfter());
+				}
+				if(current.consumesToken()) {
+					consumedCharacters += current.getEnd().length();
+				}
 			}
 		}
-		return 0;
-	}
-
-	private List<Statement> parseLine(String nextLine) throws ParseException {
-		List<Statement> statements = new ArrayList<Statement>();
-		String[] tokens = nextLine.split("\\s");
-		for(int i = 0; i < tokens.length; i++) {
-			i += parseToken(tokens, i, statements);
+		for(Scope scope : scopes) {
+			if(input.startsWith(scope.getStart(), index)) {
+				ScopeElement next = new ScopeElement(scope);
+				tokenScopeStack.add(next);
+				if(scope.consumesToken()) {
+					consumedCharacters += scope.getStart().length();
+				}
+				return new ScopeTokens(next.getParsedTokens(), consumedCharacters);
+			}
 		}
-		return statements;
+		return new ScopeTokens(tokenScopeStack.peek().getParsedTokens(), consumedCharacters);
 	}
 
-	public IO getIO() {
-		return io;
+	private List<ParsedItem> parseTokens(List<ParsedItem> parsedTokens) throws ParseException {
+		int level = Integer.MIN_VALUE;
+		for(ParsedItem item : parsedTokens) {
+			if(item instanceof ParsedToken) {
+				level = Math.max(((ParsedToken) item).getPrecedence(), level);
+			}
+		}
+		while(true) {
+			boolean foundToken = false;
+			int nextLevel = Integer.MIN_VALUE;
+			for(int i = 0; i < parsedTokens.size(); i++) {
+				if(parsedTokens.get(i) instanceof ParsedToken) {
+					foundToken = true;
+					ParsedToken token = (ParsedToken) parsedTokens.get(i);
+					if(token.getPrecedence() >= level) {
+						boolean reset = token.parseStatement(parsedTokens, i);
+						if(reset) {
+							i = -1;
+						}
+						continue;
+					} else {
+						nextLevel = Math.max(token.getPrecedence(), nextLevel);
+					}
+				}
+			}
+			if(foundToken) {
+				level = nextLevel;
+			} else {
+				break;
+			}
+		}
+		return parsedTokens;
 	}
 
-	public LinkedList<Statement> getLineStatements() {
-		return lineStatements;
+	private Program createProgram(List<ParsedItem> parsedTokens) {
+		List<Statement> statements = new ArrayList<>();
+		for(ParsedItem item : parsedTokens) {
+			if(item instanceof Statement) {
+				statements.add((Statement) item);
+			}
+		}
+		return new Program(statements);
 	}
 
-	public List<Statement> getParsedStatements() {
-		return parsedStatements;
+	private ConsumedToken parse(String input, int index) {
+		for(Token token : tokens) {
+			ConsumedToken result = token.consume(input, index);
+			if(result != null) {
+				return result;
+			}
+		}
+		return null;
 	}
 }

@@ -12,18 +12,17 @@ import useless.data.IO;
 import useless.data.Memory;
 import useless.exceptions.ParseException;
 import useless.parser.Parser;
-import useless.parser.TokenParser;
+import useless.parser.Scope;
 import useless.program.Program;
-import useless.tokens.Allocate;
-import useless.tokens.Assignment;
-import useless.tokens.Deallocate;
-import useless.tokens.IntegerVariable;
-import useless.tokens.MemoryVariable;
-import useless.tokens.Namespace;
-import useless.tokens.PrintMemory;
+import useless.tokens.AdditionToken;
+import useless.tokens.DivisionToken;
+import useless.tokens.IntegerToken;
+import useless.tokens.MultiplicationToken;
 import useless.tokens.PrintToken;
-import useless.tokens.SkipNextLine;
-import useless.tokens.StringVariable;
+import useless.tokens.StringToken;
+import useless.tokens.SubtractionToken;
+import useless.tokens.Token;
+import useless.tokens.WhiteSpaceToken;
 
 public class UseLess {
 	private static final String HELP = "Usage: ???";
@@ -39,7 +38,7 @@ public class UseLess {
 		if(fromFile) {
 			program = restoreProgram();
 		} else {
-			program = parseProgram();
+			program = parseProgram(arguments.getString("encoding", "UTF-8"));
 		}
 		if(!fromFile || !arguments.contains("restore-memory")) {
 			program.setMemory(new Memory(arguments.getInt("memory", 10240)));
@@ -54,10 +53,10 @@ public class UseLess {
 		}
 	}
 
-	private static Program parseProgram() {
+	private static Program parseProgram(String encoding) {
 		try {
-			return new Parser(io, getTokenParsers()).parse();
-		} catch (ParseException e) {
+			return new Parser(io, getTokenParsers()).addScope(new Scope("(", ")")).parse(encoding);
+		} catch (ParseException | IOException e) {
 			exit(e.getMessage(), e);
 			return null;
 		}
@@ -103,18 +102,16 @@ public class UseLess {
 		return null;
 	}
 
-	private static List<TokenParser> getTokenParsers() {
-		List<TokenParser> tokenParsers = new ArrayList<TokenParser>();
-		tokenParsers.add(new SkipNextLine());
-		tokenParsers.add(new Allocate());
-		tokenParsers.add(new Deallocate());
-		tokenParsers.add(new Namespace());
-		tokenParsers.add(new IntegerVariable());
-		tokenParsers.add(new StringVariable());
-		tokenParsers.add(new MemoryVariable());
-		tokenParsers.add(new Assignment());
-		tokenParsers.add(new PrintMemory());
+	private static List<Token> getTokenParsers() {
+		List<Token> tokenParsers = new ArrayList<>();
+		tokenParsers.add(new StringToken());
+		tokenParsers.add(new IntegerToken());
+		tokenParsers.add(new MultiplicationToken());
+		tokenParsers.add(new DivisionToken());
+		tokenParsers.add(new AdditionToken());
+		tokenParsers.add(new SubtractionToken());
 		tokenParsers.add(new PrintToken());
+		tokenParsers.add(new WhiteSpaceToken());
 		return tokenParsers;
 	}
 
