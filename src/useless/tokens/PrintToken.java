@@ -5,12 +5,12 @@ import useless.parser.ParsedItem;
 import useless.statements.PrintStatement;
 import useless.variables.Variable;
 
-public class PrintToken extends PrefixToken {
+public class PrintToken extends VariablePrefixToken {
 	public PrintToken() {
 		super("print", new ParsedPrintToken());
 	}
 
-	public static class ParsedPrintToken extends ParsedPrefixToken {
+	public static class ParsedPrintToken extends ParsedVariablePrefixToken {
 		private static final long serialVersionUID = 1387336072284754706L;
 
 		public ParsedPrintToken() {
@@ -18,11 +18,8 @@ public class PrintToken extends PrefixToken {
 		}
 
 		@Override
-		protected ParsedItem getResult(ParsedItem variable) throws ParseException {
-			if(variable instanceof Variable) {
-				return new PrintStatement((Variable) variable);
-			}
-			return null;
+		protected ParsedItem getResult(Variable variable) throws ParseException {
+			return new PrintStatement((Variable) variable);
 		}
 	}
 }

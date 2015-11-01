@@ -1,4 +1,6 @@
-int test = 123 + 2
-printMemory
-test = test - 20
+crnl<-2="
+"inttest="abcd"longbuffer
+test="abcdefgh"printMemoryprintcrnl
+int_test=14printMemoryprintcrnl
+abcd=0printMemoryprintcrnl~buffer~_test
 printMemory

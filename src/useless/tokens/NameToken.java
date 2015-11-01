@@ -16,11 +16,11 @@ public class NameToken implements Token {
 		StringBuilder sb = new StringBuilder();
 		for(int i = index; i < input.length(); i++) {
 			if(!Character.isLetterOrDigit(input.charAt(i))) {
-				return new ConsumedToken(sb.length(), new Name(sb.toString()));
+				break;
 			}
 			sb.append(input.charAt(i));
 		}
-		return null;
+		return new ConsumedToken(sb.length(), new Name(sb.toString()));
 	}
 
 	public static class Name extends ParsedToken {
@@ -34,7 +34,7 @@ public class NameToken implements Token {
 
 		@Override
 		public boolean parseStatement(List<ParsedItem> tokens, int index) throws ParseException {
-			tokens.set(index, new NamedVariable(name));
+			tokens.set(index, new NamedVariable(this));
 			return true;
 		}
 

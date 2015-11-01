@@ -12,7 +12,7 @@ public class StringToken implements Token {
 				if(input.charAt(i) == '\\' && i + 1 < input.length()) {
 					i++;
 				} else if(input.charAt(i) == '"') {
-					return new ConsumedToken(sb.length() + 2, new ParsedStringVariable(sb.toString()));
+					return new ConsumedToken(i - index + 1, new ParsedStringVariable(sb.toString()));
 				}
 				sb.append(input.charAt(i));
 			}

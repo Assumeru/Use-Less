@@ -3,23 +3,30 @@ package useless.variables;
 import useless.program.Program;
 import useless.program.VariablePointer;
 import useless.statements.Statement;
+import useless.tokens.NameToken.Name;
 
 public class NamedVariable implements Variable, Statement {
 	private static final long serialVersionUID = 5515008468055703762L;
-	private String name;
+	private Name name;
 	private VariablePointer variable;
 
-	public NamedVariable(String name) {
+	public NamedVariable(Name name) {
 		this.name = name;
 	}
 
-	public String getName() {
+	public Name getName() {
 		return name;
 	}
 
 	@Override
 	public void run(Program program) {
-		variable = program.getCurrentNamespace().getVariable(name);
+		if(name instanceof Statement) {
+			((Statement) name).run(program);
+		}
+		variable = program.getCurrentNamespace().getVariable(name.getName());
+		if(variable == null) {
+			throw new RuntimeException("variable \""+name.getName()+"\" @ \""+program.getCurrentNamespace().getName()+"\" is not defined");
+		}
 	}
 
 	@Override
