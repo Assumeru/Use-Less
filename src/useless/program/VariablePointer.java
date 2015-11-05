@@ -24,6 +24,10 @@ public class VariablePointer implements Serializable {
 		namespace.getProgram().getMemory().put(pos, value.getValue());
 	}
 
+	public void setValue(byte[] value) {
+		namespace.getProgram().getMemory().put(pos, value);
+	}
+
 	public int getPos() {
 		return pos;
 	}

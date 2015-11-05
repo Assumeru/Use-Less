@@ -33,7 +33,7 @@ public class AllocationToken extends BinaryToken {
 				if(second instanceof AbstractIntegerVariable) {
 					size = (int)((AbstractIntegerVariable) second).getLongValue();
 				} else {
-					size = AbstractIntegerVariable.getIntValue((ParsedVariable) second);
+					size = Variable.getIntValue((ParsedVariable) second);
 				}
 				return new AllocationStatement(name, size);
 			}

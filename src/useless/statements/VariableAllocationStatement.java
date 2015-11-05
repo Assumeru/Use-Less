@@ -2,7 +2,6 @@ package useless.statements;
 
 import useless.program.Program;
 import useless.tokens.NameToken.Name;
-import useless.variables.AbstractIntegerVariable;
 import useless.variables.Variable;
 
 public class VariableAllocationStatement extends AllocationStatement {
@@ -19,7 +18,7 @@ public class VariableAllocationStatement extends AllocationStatement {
 		if(size instanceof Statement) {
 			((Statement) size).run(program);
 		}
-		setSize(AbstractIntegerVariable.getIntValue(size));
+		setSize(Variable.getIntValue(size));
 		super.run(program);
 	}
 }

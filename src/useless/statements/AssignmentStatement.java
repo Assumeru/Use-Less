@@ -22,6 +22,12 @@ public class AssignmentStatement extends NamedVariable {
 		if(value instanceof Statement) {
 			((Statement) value).run(program);
 		}
-		setValue(value);
+		if(value.getValue().length < variable.getValue().length) {
+			byte[] val = new byte[variable.getValue().length];
+			System.arraycopy(value.getValue(), 0, val, 0, value.getValue().length);
+			setValue(val);
+		} else {
+			setValue(value.getValue());
+		}
 	}
 }

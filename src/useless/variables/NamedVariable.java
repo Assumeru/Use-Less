@@ -5,7 +5,7 @@ import useless.program.VariablePointer;
 import useless.statements.Statement;
 import useless.tokens.NameToken.Name;
 
-public class NamedVariable implements Variable, Statement {
+public class NamedVariable extends StatementVariable {
 	private static final long serialVersionUID = 5515008468055703762L;
 	private Name name;
 	private VariablePointer variable;
@@ -34,28 +34,8 @@ public class NamedVariable implements Variable, Statement {
 		return variable.getValue();
 	}
 
-	public void setValue(Variable value) {
+	protected void setValue(byte[] value) {
 		variable.setValue(value);
-	}
-
-	@Override
-	public Variable multiply(Variable value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Variable add(Variable value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Variable subtract(Variable value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Variable divide(Variable value) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

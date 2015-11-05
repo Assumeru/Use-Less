@@ -1,6 +1,6 @@
 package useless.variables;
 
-public class ParsedStringVariable implements ParsedVariable {
+public class ParsedStringVariable extends ParsedVariable {
 	private static final long serialVersionUID = 6239159129601142074L;
 	private String value;
 
@@ -14,26 +14,11 @@ public class ParsedStringVariable implements ParsedVariable {
 	}
 
 	@Override
-	public Variable multiply(Variable value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public Variable add(Variable value) {
 		if(value instanceof ParsedVariable) {
 			return new ParsedStringVariable(this.value + value.toString());
 		}
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Variable subtract(Variable value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Variable divide(Variable value) {
-		throw new UnsupportedOperationException();
+		return super.add(value);
 	}
 
 	@Override
